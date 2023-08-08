@@ -18,38 +18,6 @@ import torch.nn.functional as F
 from torch.nn import BCELoss, BCEWithLogitsLoss, CrossEntropyLoss
 from itertools import product
 
-DATASET_NAMES = [
-        "fiqa",
-        "trec-covid",
-        "scifact",
-        "nfcorpus",
-        "scidocs",
-        "webis-touche2020",
-        "dbpedia-entity",
-        "arguana",
-        "nq",
-        "quora",
-        "fever",
-        "climate-fever",
-        "hotpotqa",
-        'cqadupstack/gaming',
-        'cqadupstack/tex',
-        'cqadupstack/programmers',
-        'cqadupstack/wordpress',
-        'cqadupstack/webmasters',
-        'cqadupstack/mathematica',
-        'cqadupstack/stats',
-        'cqadupstack/gis',
-        'cqadupstack/english',
-        'cqadupstack/physics',
-        'cqadupstack/unix',
-        'cqadupstack/android',
-        'bioasq',
-        'robust04',
-        'signal1m',
-        'trec-news'
-    ]
-
 #################################################
 #########   RankLoss          ###################
 #################################################
@@ -437,6 +405,4 @@ def read_beir(beir_folder, corpus):
                 pid2doc[ctxs[i]["id"]] = ctxs[i]["text"]   
     
     return qid2query, pid2doc
-
-    
     
