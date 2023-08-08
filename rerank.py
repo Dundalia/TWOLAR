@@ -27,7 +27,7 @@ def main(
     tokenizer = AutoTokenizer.from_pretrained(model_ckpt)
     model.eval()
 
-    for corpus in ["nfcorpus"]:
+    for corpus in DATASET_NAMES:
     
         print(f"====== {corpus} ======")
 
