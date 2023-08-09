@@ -141,8 +141,8 @@ In the `eval_trec_dl.py` script, we directly retrieve the top 100 documents for 
 We have downloaded the quereis and qrels from their [github](https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020.html).
 
 ```bash
-mkdir $YOUR_TRECDL_FODLER
-cd $YOUR_TRECDL_FODLER
+mkdir $YOUR_TRECDL_FOLDER
+cd $YOUR_TRECDL_FOLDER
 
 wget https://msmarco.blob.core.windows.net/msmarcoranking/msmarco-test2019-queries.tsv.gz
 gunzip msmarco-test2019-queries.tsv.gz
@@ -159,7 +159,7 @@ The `eval_trec_dl.py` script assumes that the files `msmarco-test2019-queries.ts
 
 ```bash
 python3 eval_trec_dl.py \
---trecdl_path $YOUR_TRECDL_FODLER \
+--trecdl_path $YOUR_TRECDL_FOLDER \
 --index_path $YOUR_INDEX_PATH \
 --corpus_path $YOUR_CORPUS_PATH \
 --model_ckpt $YOUR_MODEL_CKPT_PATH \
