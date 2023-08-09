@@ -13,8 +13,8 @@ This repository provides the implementation of the paper "[TWOLAR: a TWO-steps L
   - [Evaluating on BEIR](#evaluating-on-beir)
     - [Download](#download)
     - [Retrieval](#retrieval)
-    - [reranking](#reranking)
-    - [evaluation](#evaluation)
+    - [Reranking](#reranking)
+    - [Evaluation](#evaluation)
 
 # A quick example
 Here we explain how to utilize the models. The code for this example can be found in the notebook `example.ipynb`. 
