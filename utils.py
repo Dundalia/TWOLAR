@@ -50,12 +50,30 @@ DATASET_NAMES = [
         'trec-news'
     ]
 
-#################################################
-#########   RankLoss          ###################
-#################################################
+##########
+##########
 
 class RankLoss:
+    """
+    RankLoss provides a collection of static methods to compute various ranking-based loss functions
+    used in learning-to-rank (LTR) tasks. These methods can handle pointwise, pairwise, and listwise
+    ranking scenarios. Each method computes a specific ranking loss given the predicted and ground-truth
+    relevancy scores.
 
+    Methods include:
+    - softmax_ce_loss: Computes the softmax cross-entropy loss.
+    - pointwise_rmse: Computes the pointwise root mean square error.
+    - pointwise_bce: Computes the pointwise binary cross entropy loss.
+    - rank_net: Implements the RankNet loss.
+    - list_net: Implements the ListNet loss.
+    - lambda_loss: Implements the LambdaLoss framework with various weighing schemes.
+    
+    The class also provides helper functions to support different weighing schemes used in the LambdaLoss
+    framework.
+
+    Note: If the ground-truth relevancy score (y_true) is not provided to a method, it is assumed to be a zero
+    tensor, with the first element set to 1.
+    """
     @staticmethod
     def softmax_ce_loss(y_pred, *args, **kwargs):
         return F.cross_entropy(y_pred, torch.zeros((y_pred.size(0),)).long().cuda())
@@ -233,13 +251,26 @@ def rankNetWeightedByGTDiff_scheme(G, D, *args):
 
 def rankNetWeightedByGTDiffPowed_scheme(G, D, *args):
     return torch.abs(torch.pow(args[1][:, :, None], 2) - torch.pow(args[1][:, None, :], 2))
-    
 
-#################################################
-#########   get score         ###################
-#################################################
+##########
+##########
 
 class Score:
+    """
+    Score offers a collection of static methods for extracting specific scores from a tensor of logits,
+    typically obtained as an output from models like T5 and flan-T5. These scores are computed based on
+    predefined token IDs corresponding to 'true' and 'false' representations in the T5 and flan-T5 vocabularies.
+
+    Methods include:
+    - extra_id: Extracts the logit corresponding to token ID 32089.
+    - difference: Calculates the difference between the logits for the 'true' (token ID 1176) and 'false' (token ID 6136) tokens.
+    - softmax: Computes the softmax scores for the 'true' (token ID 1176) and 'false' (token ID 6136) logits, and returns the softmax value for the 'true' token.
+
+    Note:
+    - Token ID 1176 corresponds to the 'true' token in the T5 and flan-T5 vocabularies.
+    - Token ID 6136 corresponds to the 'false' token in the T5 and flan-T5 vocabularies.
+    - Token ID 32089 corresponds to the '<extra_id_10>' token in the T5 and flan-T5 vocabularies.
+    """
     
     @staticmethod
     def extra_id(logits):
@@ -258,14 +289,33 @@ class Score:
         scores = [torch.nn.functional.softmax(torch.stack([true_logit, false_logit]), dim=0)[0]
                  for true_logit, false_logit in zip(true_logits, false_logits)]
         return torch.stack(scores) 
-        
 
-#################################################
-#########   Rerank Data       ###################
-#################################################
+##########
+##########
 
 class RerankData(Dataset):
-    def __init__(self, data, tokenizer, neg_num=20, label=True):
+    """
+    RerankData provides an interface to handle the dataset used for re-ranking tasks.
+    This dataset wrapper is primarily designed to work with data where queries are paired with relevant (positive) and
+    non-relevant (negative) passages.
+
+    Specifically:
+    - It supports the ability to select a certain number of negative passages (`neg_num`) for each query. 
+    - It accommodates scenarios where labels (true positive passages) are not desired.
+    - The default value of `neg_num` is set to 29, but in our specific approach, we set `label` to False. 
+      This results in 30 re-ranked documents in total for each query, accounting for the one additional document when labels are excluded.
+
+    Note:
+    - Tokenization is performed based on the provided tokenizer.
+    - '<padding_passage>' is used to pad passages for consistent length across batches.
+
+    Args:
+    - data: List containing the data points. Each data point has a 'query', 'positive_passages', and 'retrieved_passages' keys.
+    - tokenizer: Tokenizer to be used for encoding the input sequences.
+    - neg_num: Number of negative passages to be selected for each query. Default is 29.
+    - label: Boolean indicating if positive labels (true passages) should be included in the output. Default is False.
+    """
+    def __init__(self, data, tokenizer, neg_num=29, label=False):
         self.data = data
         self.tokenizer = tokenizer
         self.neg_num = neg_num
@@ -293,16 +343,17 @@ class RerankData(Dataset):
 
     def collate_fn(self, data):
         query, passages = list(*data)
-        inputs = [f"Query: {query} Document: {passage}" for passage in passages]
+        inputs = [f"Query: {query} Document: {passage} Relevant: " 
+                  for passage in passages]
         
         features = self.tokenizer(
             inputs, 
             truncation = True, return_tensors="pt", 
             max_length=500, padding=True
         )
-    
         return features
 
+##########
 ##########
 
 class MemoryMappedDataset(torch.utils.data.Dataset):
@@ -391,6 +442,14 @@ class QueryTSVDataset(MemoryMappedDataset):
             }
 
 def read_query(file):
+    """
+    Reads the query file and returns a dictionary mapping query IDs to their respective queries.
+    Args:
+    - file (str): Path to the input file containing the queries. Each line in the file should contain a query ID 
+                  and the query text separated by a tab.
+    Returns:
+    - dict: A dictionary where the keys are query IDs and values are the corresponding queries.
+    """
     qid2query = {}
     with open(file, 'r') as fin:
         for i, line in tqdm(enumerate(fin), desc='read query file {}'.format(file)):
@@ -400,6 +459,16 @@ def read_query(file):
 
 
 def read_corpus(corpus_path):
+    """
+    Reads the corpus file and returns a dictionary mapping passage IDs to their respective document text.
+
+    Args:
+    - corpus_path (str): Path to the input file containing the corpus. Each line in the file should contain a 
+                         passage ID, the document text, and the title separated by tabs.
+
+    Returns:
+    - dict: A dictionary where the keys are passage IDs and values are the corresponding document text.
+    """
     pid2doc = {}
     with open(corpus_path, 'r') as fin:
         for i, line in tqdm(enumerate(fin), desc='read corpus file {}'.format(corpus_path)):
@@ -409,6 +478,19 @@ def read_corpus(corpus_path):
     
 
 def read_trec(trec_in_path):
+    """
+    Reads a TREC-formatted file and extracts the query ID, passage ID, and score. Returns two dictionaries: one mapping 
+    query IDs to a list of corresponding passage IDs, and the other mapping query IDs to the list of corresponding scores.
+
+    Args:
+    - trec_in_path (str): Path to the TREC-formatted input file. Each line should contain a query ID, passage ID, rank,
+                          score, etc., separated by spaces.
+
+    Returns:
+    - tuple: A tuple of two dictionaries:
+             1) mapping query IDs to lists of passage IDs.
+             2) mapping query IDs to lists of scores.
+    """
     qid2pid = defaultdict(list)
     qid2pidscore = defaultdict(list)
     with open(trec_in_path, 'r') as fin:
@@ -420,6 +502,19 @@ def read_trec(trec_in_path):
 
 
 def read_beir(beir_folder, corpus):
+    """
+    Reads BEIR-formatted data and returns dictionaries mapping query IDs to their respective queries and passage IDs 
+    to their respective document text.
+
+    Args:
+    - beir_folder (str): The base directory containing BEIR-formatted data.
+    - corpus (str): The name of the specific corpus in the BEIR folder to be processed.
+
+    Returns:
+    - tuple: A tuple of two dictionaries:
+             1) mapping query IDs to their respective queries.
+             2) mapping passage IDs to their respective document text.
+    """
     questions_tsv_path=f"{beir_folder}/{corpus}/queries.test.tsv"
     passages_tsv_path=f"{beir_folder}/{corpus}/collection.tsv"
 

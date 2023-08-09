@@ -17,35 +17,45 @@ def main(
     n_docs = 100,
     score_strategy = "difference",
 ):
+
+    # Set device to CUDA if available, else use CPU
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
+    # Get scoring function based on user-defined strategy
     get_score = getattr(Score, score_strategy)
+    # Create the output directory if it does not exist
     os.makedirs(outdir, exist_ok=True)
-    
+
+    # Load and initialize the T5 model and tokenizer for re-ranking
     print(f"===== LOADING  MonoT5: {model_ckpt} =====")
     model = AutoModelForSeq2SeqLM.from_pretrained(model_ckpt).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_ckpt)
+    # Set the model to evaluation mode
     model.eval()
 
+    # Loop through each corpus in the defined dataset names
     for corpus in DATASET_NAMES:
-    
         print(f"====== {corpus} ======")
 
-        ### import queries, corpus adn bm25 trec
+        # Load query and document data, and initial ranking from retriever
         runfile_tsv_path=f"{path_to_runfile}/{corpus}"
         qid2query, pid2doc = read_beir(beir_folder, corpus)
         qid2pid, qid2pidscore = read_trec(runfile_tsv_path)
-        
+
+        # Set path for the output reranked results
         trec_out_file_path=f"{outdir}/{corpus}"
-            
-        for qid in tqdm( qid2pid, desc="running predictions"):
+
+        # Loop through each query and its associated documents
+        for qid in tqdm(qid2pid, desc="running predictions"):
             query = qid2query[qid]
             pids = qid2pid[qid][:n_docs]
             texts = [pid2doc[pid] for pid in pids]
 
+            # Initialize empty list to store scores
             scores = []
             for pid in pids:
                 doc = pid2doc[pid]
+                # Prepare model input
                 input = [f"Query: {query} Document: {doc} Relevant: "]
                 features = tokenizer(
                     input, truncation = True, 
@@ -57,6 +67,8 @@ def main(
                 decode_ids = torch.full((input_ids.size(0), 1),
                                          model.config.decoder_start_token_id,
                                          dtype=torch.long)
+                
+                # Pass the input through the model and get re-ranking scores
                 with torch.no_grad():
                     output = model(
                         input_ids = input_ids.to(device), 
@@ -65,9 +77,12 @@ def main(
                     ) 
                 logits = output.logits[:,0,:]
                 scores.append(get_score(logits).item())
-                
+
+            # Sort the documents by their scores in descending order
             reranked_pids = dict(zip(pids, scores))
             reranked_pids = dict(sorted(reranked_pids.items(), key=operator.itemgetter(1), reverse=True))
+
+            # Write the reranked results to the output file
             with open(trec_out_file_path, 'a') as f:
                 for i, (pid, score) in enumerate(reranked_pids.items()):
                     f.write(f"{qid} Q0 {pid} {i+1} {score} TWOLAR\n")
