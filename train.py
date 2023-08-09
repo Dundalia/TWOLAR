@@ -5,11 +5,10 @@ import pandas as pd
 from tqdm.auto import tqdm
 import torch
 from torch.utils.data import Dataset
-from rank_loss import RankLoss
 from accelerate import Accelerator
 from sklearn.metrics import ndcg_score
 from jsonargparse import CLI
-from utils import RerankData, Score
+from utils import RankLoss, RerankData, Score
 from transformers import (
     AutoTokenizer,
     AutoConfig,

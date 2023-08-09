@@ -12,10 +12,11 @@ from tqdm import tqdm
 def main(
     outdir: str = "/data/davide/dragon/results/developer/flan-t5-small",
     path_to_runfile: str = "/data/davide/dragon/results/retriever/bm25",
-    beir_folder: str = "./beir",
+    beir_folder: str = "/data/davide/dragon/beir",
     model_ckpt = "/data/davide/models/t5/rankt5/flan-t5-small-difference-total-30/checkpoint-1/",
     n_docs = 100,
     score_strategy = "difference",
+    corpus: str = "",
 ):
 
     # Set device to CUDA if available, else use CPU
@@ -32,9 +33,15 @@ def main(
     tokenizer = AutoTokenizer.from_pretrained(model_ckpt)
     # Set the model to evaluation mode
     model.eval()
+    
+    # if a specific corpus is indicated, eval only on it, otherwise on full benchmark
+    if corpus in DATASET_NAMES:
+        corpus_to_eval = [corpus]
+    else:
+        corpus_to_eval = DATASET_NAMES
 
     # Loop through each corpus in the defined dataset names
-    for corpus in DATASET_NAMES:
+    for corpus in corpus_to_eval:
         print(f"====== {corpus} ======")
 
         # Load query and document data, and initial ranking from retriever
