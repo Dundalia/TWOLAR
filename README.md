@@ -143,6 +143,19 @@ cd ..
 python3 prep_beir_eval.py --data_dir $YOUR_BEIR_FOLDER/nfcorpus
 ```
 
+This will create three files `collection.tsv`, `queries.test.tsv`, and `qrels.test.tsv` formatted respectively as follows:
+
+```bash
+- collection.tsv
+pid \t document
+
+- queries.test.tsv
+qid \t query
+
+- qrels.test.tsv
+qid 0 pid score
+```
+
 
 ### Reranking
 
