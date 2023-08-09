@@ -99,6 +99,17 @@ python3 train.py \
 
 # Evaluation
 
+Our evaluation scripts work for our models `TWOLAR-xl`, `TWOLAR-large`, but also for the monoT5 checkpoints available on the HuggingFace Hub, with `castorini/monot5-large-msmarco`, `castorini/monot5-3b-msmarco`, `castorini/monot5-large-msmarco-10k`, `castorini/monot5-3b-msmarco-10k` among others. In this case the `score_strategy` arg must be set to `softmax`.
+
+Our evaluation scripts generate run files in the format described in the [next section](#run-files-format). 
+For evaluation, we follow the [instruction to build](https://github.com/castorini/anserini-tools/tree/95fbaf2af75e2b59304ac5702d5479d50f3bd9ef) `trec_eval.9.0.4` so that we do not have to install any package for evaluation.
+
+Once built, we can compute the nDCG@1, nDCG@5, and nDCG@10 as follows:
+
+```bash
+./anserini-tools/eval/trec_eval.9.0.4/trec_eval -c -m ndcg_cut.1,5,10 $YOUR_QRELS_FILE_PATH $YOUR_RESULTS_FILE_PATH
+```
+
 ### Run files format
 
 The result of each retrieval or reranking process is organized into folders named after the retrieval method followed by the specific corpus from the BEIR benchmark. For instance, you would have a folder structure like `results/bm25/nfcorpus`.
@@ -121,6 +132,40 @@ For the retrieval phase we use BM25, DRAGON, and SPLADE models. We strictly adhe
 - BM25: [pyserini](https://github.com/castorini/pyserini/)
 - DRAGON: [dpr-scale/dragon](https://github.com/facebookresearch/dpr-scale/tree/main/dragon)
 - SPLADE: [splade](https://github.com/naver/splade/tree/main)
+
+## Evaluating on TREC-DL2019 and TREC-DL2020
+
+For the evaluation on the MSMARCO dataset we have adopted test sets of the 2019 and 2020 competitions: TREC-DL2019 and TREC-DL2020. 
+In the `eval_trec_dl.py` script, we directly retrieve the top 100 documents for each query using the pyserini API. To that aim we indexed and stored the indexes following the [instructions](https://github.com/castorini/pyserini/blob/master/docs/usage-index.md#building-a-bm25-index-embeddable-python-implementation). 
+
+We have downloaded the quereis and qrels from their [github](https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020.html).
+
+```bash
+mkdir $YOUR_TRECDL_FODLER
+cd $YOUR_TRECDL_FODLER
+
+wget https://msmarco.blob.core.windows.net/msmarcoranking/msmarco-test2019-queries.tsv.gz
+gunzip msmarco-test2019-queries.tsv.gz
+wget https://trec.nist.gov/data/deep/2019qrels-pass.txt
+
+wget https://msmarco.blob.core.windows.net/msmarcoranking/msmarco-test2020-queries.tsv.gz
+gunzip msmarco-test2020-queries.tsv.gz
+wget https://trec.nist.gov/data/deep/2020qrels-pass.txt
+
+cd ..
+```
+
+The `eval_trec_dl.py` script assumes that the files `msmarco-test2019-queries.tsv`, `2019qrels-pass.txt`, `msmarco-test2020-queries.tsv`, `2020qrels-pass.txt` are stored into the `$YOUR_TRECDL_FOLDER` folder. It will create two files in the aforementioned run file format: `$YOUR_OUTDIR/trec-dl-2019` and `$YOUR_OUTDIR/trec-dl-2020`.
+
+```bash
+python3 eval_trec_dl.py \
+--trecdl_path $YOUR_TRECDL_FODLER \
+--index_path $YOUR_INDEX_PATH \
+--corpus_path $YOUR_CORPUS_PATH \
+--model_ckpt $YOUR_MODEL_CKPT_PATH \
+--outdir $YOUR_OUTDIR \
+--score_strategy "difference" \
+```
 
 ## Evaluating on BEIR
 
@@ -156,14 +201,12 @@ qid \t query
 qid 0 pid score
 ```
 
-
 ### Reranking
 
-At this point we can utilize the `rerank.py` script as follows:
+At this point we can utilize the `eval_beir.py` to rerank the documents. The script assumes that under the `$YOUR_PATH_TO_RUNFILE` folder are contained the run files of the results of the first-stage retriever for each of the BEIR datasets. 
 
 ```bash
-python3 rerank.py \
---corpus nfcorpus \
+python3 eval_beir.py \
 --path_to_runfile $YOUR_PATH_TO_RUNFILE \
 --beir_folder $YOUR_BEIR_FOLDER \
 --model_ckpt $YOUR_MODEL_CHECKPOINT_PATH \
@@ -171,9 +214,7 @@ python3 rerank.py \
 --n_docs 100 \
 ```
 
-### Evaluation
 
-For evaluation, we folow the [instruction to build](https://github.com/castorini/anserini-tools/tree/95fbaf2af75e2b59304ac5702d5479d50f3bd9ef) `trec_eval.9.0.4` so that we do not have to install any package for evaluation.
 
 
 
