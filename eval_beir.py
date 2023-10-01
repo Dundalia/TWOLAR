@@ -10,13 +10,13 @@ from tqdm import tqdm
 
 
 def main(
-    outdir: str = "/data/davide/dragon/results/developer/flan-t5-small",
-    path_to_runfile: str = "/data/davide/dragon/results/retriever/bm25",
-    beir_folder: str = "/data/davide/dragon/beir",
-    model_ckpt = "/data/davide/models/t5/rankt5/flan-t5-small-difference-total-30/checkpoint-1/",
-    n_docs = 100,
-    score_strategy = "difference",
-    corpus: str = "",
+    outdir: str,
+    path_to_runfile: str,
+    beir_folder: str,
+    model_ckpt: str,
+    n_docs: int,
+    score_strategy: str,
+    corpus: str,
 ):
 
     # Set device to CUDA if available, else use CPU
