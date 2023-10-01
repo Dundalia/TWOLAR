@@ -9,13 +9,13 @@ import torch
 import operator
 
 def main(
-    trecdl_path: str = "/data/davide/", 
-    index_path: str = "/data/davide/indexes/msmarco_corpus_jsonl", 
-    corpus_path: str = "/data/davide/dragon/msmarco/collection.tsv",
-    model_ckpt: str = "/data/davide/models/t5/rankt5/flan-t5-small-difference-total-30/checkpoint-1", 
-    outdir: str = "/data/davide/dragon/results/developer/flan-t5-small", 
-    score_strategy: str = "difference", 
-    topk: int = 100,
+    trecdl_path: str, 
+    index_path: str, 
+    corpus_path: str,
+    model_ckpt: str, 
+    outdir: str, 
+    score_strategy: str, 
+    topk: int,
 ):
 
     # Determine device (either CPU or GPU)
