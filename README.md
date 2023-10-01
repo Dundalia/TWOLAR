@@ -174,7 +174,7 @@ python3 eval_trec_dl.py \
 We adopted the preprocessing of the [DRAGON repository](https://github.com/facebookresearch/dpr-scale/tree/main/dragon#dragon_beir_eval). Here we use the nfcorpus dataset as an example.
 We first have to download BEIR datasets from its [github](https://github.com/beir-cellar/beir).
 
-Following the DRAGON implementation, we first download decompress the dataset; then, using their script we preprocess the corpus and queries. We also transform the `qrels.test.tsv` into trec qrel fromat. 
+Following the DRAGON implementation, we first download and decompress the dataset; then, using their script we preprocess the corpus and queries. We also transform the `qrels.test.tsv` into trec qrel fromat. 
 
 ```bash
 # data download and decompress
