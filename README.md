@@ -165,6 +165,7 @@ python3 eval_trec_dl.py \
 --model_ckpt $YOUR_MODEL_CKPT_PATH \
 --outdir $YOUR_OUTDIR \
 --score_strategy "difference" \
+--topk 100 \
 ```
 
 ## Evaluating on BEIR
