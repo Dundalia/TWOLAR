@@ -11,10 +11,7 @@ This repository provides the implementation of the paper "[TWOLAR: a TWO-steps L
 - [Evaluation](#evaluation)
   - [Run files format](#run-files-format)   
   - [Evaluating on BEIR](#evaluating-on-beir)
-    - [Download](#download)
-    - [Retrieval](#retrieval)
-    - [Reranking](#reranking)
-    - [Evaluation](#evaluation)
+  - [Evaluating on TREC-DL2019 and TREC-DL2020](#evaluating-on-trec-dl2019-and-trec-dl2020)
 
 # A quick example
 Here we explain how to utilize the models.  
@@ -138,7 +135,7 @@ For the retrieval phase we use BM25, DRAGON, and SPLADE models. We strictly adhe
 For the evaluation on the MSMARCO dataset we have adopted test sets of the 2019 and 2020 competitions: TREC-DL2019 and TREC-DL2020. 
 In the `eval_trec_dl.py` script, we directly retrieve the top 100 documents for each query using the pyserini API. To that aim we indexed and stored the indexes following the [instructions](https://github.com/castorini/pyserini/blob/master/docs/usage-index.md#building-a-bm25-index-embeddable-python-implementation). 
 
-We have downloaded the quereis and qrels from their [github](https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020.html).
+We have downloaded the queries and qrels from their [github](https://microsoft.github.io/msmarco/TREC-Deep-Learning-2020.html).
 
 ```bash
 mkdir $YOUR_TRECDL_FOLDER
