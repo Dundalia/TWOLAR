@@ -17,14 +17,14 @@ from transformers import (
 
 
 def main(
-    base_model: str = "google/flan-t5-small", 
-    train_path: str = "/data/davide/rankgpt-data/total-gpt3.5-train.jsonl",
-    test_path: str = "/data/davide/rankgpt-data/total-gpt3.5-test.jsonl",
-    outdir: str = "/data/davide/models/developer/t5-small",
-    epochs: int = 3,
+    base_model: str, 
+    train_path: str,
+    test_path: str,
+    outdir: str,
+    epochs: int = 1,
     eval_interval: int = 500, 
     neg_num: int = 29, 
-    gradient_accumulation_steps: int = 8, 
+    gradient_accumulation_steps: int = 32, 
     save_at_epoch_end: bool = True,
     loss_type: str = "rank_net", 
     score_strategy: str = "difference",
