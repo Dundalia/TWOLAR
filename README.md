@@ -17,7 +17,7 @@ This repository provides the implementation of the paper "[TWOLAR: a TWO-steps L
     - [Evaluation](#evaluation)
 
 # A quick example
-Here we explain how to utilize the models. The code for this example can be found in the notebook `example.ipynb`. 
+Here we explain how to utilize the models.  
 First of all, define the model checkpoint and the corresponding score strategy:
 ```python
 from utils import Score
