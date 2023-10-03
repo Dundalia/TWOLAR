@@ -1,6 +1,6 @@
 # TWOLAR: a TWO-steps LLM-Augmented distillation method for passage Reranking
 
-This repository provides the implementation of the paper "[TWOLAR: a TWO-steps LLM-Augmented distillation method for passage Reranking](google.com)". The TWOLAR method introduces a novel approach to passage reranking, leveraging two-step distillation in combination with language model augmentation to improve results in various reranking benchmarks.
+This repository provides the implementation of the paper "TWOLAR: a TWO-steps LLM-Augmented distillation method for passage Reranking". The TWOLAR method introduces a novel approach to passage reranking, leveraging two-step distillation in combination with language model augmentation to improve results in various reranking benchmarks.
 
 ![data-generation](/images/data-generation.png)
 *Illustration of the methodology adopted to build the distillation dataset.*
