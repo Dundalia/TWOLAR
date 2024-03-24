@@ -18,7 +18,7 @@ Here we explain how to utilize the models.
 First of all, define the model checkpoint and the corresponding score strategy:
 ```python
 from utils import Score
-model_ckpt = "..."
+model_ckpt = "Dundalia/TWOLAR-xl"
 score_strategy = "difference"
 get_score = getattr(Score, score_strategy)
 ```
