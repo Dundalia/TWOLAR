@@ -12,6 +12,8 @@ This repository provides the implementation of the paper "TWOLAR: a TWO-steps LL
   - [Run files format](#run-files-format)   
   - [Evaluating on BEIR](#evaluating-on-beir)
   - [Evaluating on TREC-DL2019 and TREC-DL2020](#evaluating-on-trec-dl2019-and-trec-dl2020)
+- [Citation](#citation)
+
 
 # A quick example
 Here we explain how to utilize the models.  
@@ -211,6 +213,21 @@ python3 eval_beir.py \
 --score_strategy difference \
 --n_docs 100 \
 ```
+
+# Citation
+```
+@inbook{inbook,
+author = {Baldelli, Davide and Jiang, Junfeng and Aizawa, Akiko and Torroni, Paolo},
+year = {2024},
+month = {03},
+pages = {470-485},
+title = {TWOLAR: A TWO-Step LLM-Augmented Distillation Method for Passage Reranking},
+isbn = {978-3-031-56026-2},
+doi = {10.1007/978-3-031-56027-9_29}
+}
+```
+
+
 
 
 
