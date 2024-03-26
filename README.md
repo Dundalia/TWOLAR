@@ -216,26 +216,13 @@ python3 eval_beir.py \
 
 # Citation
 ```
-@InProceedings{10.1007/978-3-031-56027-9_29,
-author="Baldelli, Davide
-and Jiang, Junfeng
-and Aizawa, Akiko
-and Torroni, Paolo",
-editor="Goharian, Nazli
-and Tonellotto, Nicola
-and He, Yulan
-and Lipani, Aldo
-and McDonald, Graham
-and Macdonald, Craig
-and Ounis, Iadh",
-title="TWOLAR: A TWO-Step LLM-Augmented Distillation Method for Passage Reranking",
-booktitle="Advances in Information Retrieval",
-year="2024",
-publisher="Springer Nature Switzerland",
-address="Cham",
-pages="470--485",
-abstract="In this paper, we present TWOLAR: a two-stage pipeline for passage reranking based on the distillation of knowledge from Large Language Models (LLM). TWOLAR introduces a new scoring strategy and a distillation process consisting in the creation of a novel and diverse training dataset. The dataset consists of 20K queries, each associated with a set of documents retrieved via four distinct retrieval methods to ensure diversity, and then reranked by exploiting the zero-shot reranking capabilities of an LLM. Our ablation studies demonstrate the contribution of each new component we introduced. Our experimental results show that TWOLAR significantly enhances the document reranking ability of the underlying model, matching and in some cases even outperforming state-of-the-art models with three orders of magnitude more parameters on the TREC-DL test sets and the zero-shot evaluation benchmark BEIR. To facilitate future work we release our data set, finetuned models, and code (Code: https://github.com/Dundalia/TWOLAR; Models and Dataset: https://huggingface.co/Dundalia).",
-isbn="978-3-031-56027-9"
+@inproceedings{baldelli2024twolar,
+  title={TWOLAR: A TWO-Step LLM-Augmented Distillation Method for Passage Reranking},
+  author={Baldelli, Davide and Jiang, Junfeng and Aizawa, Akiko and Torroni, Paolo},
+  booktitle={European Conference on Information Retrieval},
+  pages={470--485},
+  year={2024},
+  organization={Springer}
 }
 ```
 
